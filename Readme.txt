@@ -1,4 +1,5 @@
-    ############### configurations for dir #################################################################################
+    ##xinyizhang@pitt.edu##
+	############### configurations for dir #################################################################################
     ## Folder structure:
     ## $DAC$|
 	##    |overlay  
@@ -14,4 +15,11 @@
 	##                 |<teamname>
 	##                            |$your files$
 	###############    end configurations  #################################################################################
+	
+	
+	##12/6/2017 update
+	##Redundent variables in DACSDC.py were moved.
+	##Function "storeResultsToXML" in DACSDC.py is revised. 
+	##Please ignore object "boat9" and "group4" in the training dataset. They will be deleted from the latest training dataset.
+	
 	

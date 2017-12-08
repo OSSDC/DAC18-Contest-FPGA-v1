@@ -17,13 +17,13 @@ result = '/home/xilinx/jupyter_notebooks/DAC/result'
 
 timedir = '/home/xilinx/jupyter_notebooks/DAC/result/time'
 coordir = '/home/xilinx/jupyter_notebooks/DAC/result/coordinate'
-xml = '/home/xilinx/jupyter_notebooks/DAC/result/xml'
+xmlpath = '/home/xilinx/jupyter_notebooks/DAC/result/xml'
 
 alltime = '/home/xilinx/jupyter_notebooks/DAC/result/time/alltime.txt'
 ##must be called to creat default directory
 def startup(teamname):
     mycoord = coordir + '/' + teamname
-    myxml = xml +'/' + teamname
+    myxml = xmlpath +'/' + teamname
     
     if os.path.isdir(DAC):
         pass
@@ -55,10 +55,10 @@ def startup(teamname):
     else:    
         os.mkdir(coordir)
         
-    if os.path.isdir(xml):
+    if os.path.isdir(xmlpath):
         pass
     else:
-        os.mkdir(xml)
+        os.mkdir(xmlpath)
         
     if os.path.isdir(mycoord):
         pass
@@ -72,28 +72,25 @@ def startup(teamname):
 ##create timefile file
     ftime = open(alltime,'a+')
     ftime.close()
-    return [DAC,imgdir,overlaydir,result,timedir,coordir,xml,mycoord,myxml]
+    return [DAC,imgdir,overlaydir,result,timedir,coordir,xmlpath,mycoord,myxml]
     
     
 ##get image name list
 def getnames():
     nameset1 = []
-    nameset2 = []
     namefiles= os.listdir(imgdir)
     for f in namefiles:
         if 'jpg' in f:
             imgname = f.split('.')[0]
             nameset1.append(imgname)
     nameset1.sort(key = int)
-    for f in nameset1:
-        f = f + ".jpg"
-        nameset2.append(f)
-    return nameset2
+    for f in range(len(nameset1)):
+        nameset1[f] = nameset1[f]  + ".jpg"
+    return nameset1
 
 ##batch the images, may help when write to XML
 def getnamesbatch():
     nameset1 = []
-    nameset2 = []
     nameset3 = []
     nameset4 = []
     namefiles= os.listdir(imgdir)
@@ -102,35 +99,29 @@ def getnamesbatch():
             imgname = f.split('.')[0]
             nameset1.append(imgname)
     nameset1.sort(key = int)
-    for f in nameset1:
-        f = f + ".jpg"
-        nameset2.append(f)
-    lenn = int(len(nameset2) / batchsize)
-    
-    for i in range (0, len(nameset2), batchsize):
-        nameset3 = nameset2[i:i+batchsize]
+    for f in range(len(nameset1)):
+        nameset1[f] = nameset1[f]  + ".jpg"
+    for i in range (0, len(nameset1), batchsize):
+        nameset3 = nameset1[i:i+batchsize]
         nameset4.append(nameset3)
     return nameset4
 
 ##get imagepath list
 def getpath():
     set1 = []
-    set2=  []
     files= os.listdir(imgdir)
     for f in files:
         if 'jpg' in f:
             imgname = f.split('.')[0]
             set1.append(imgname)
     set1.sort(key = int)
-    for f in set1:
-        f = imgdir +"/" + f + ".jpg"
-        set2.append(f)
-    return set2
+    for f in range(len(set1)):
+        set1[f] = imgdir +"/" + set1[f] + ".jpg"
+    return set1
 
 ##batch the images dir
 def getpathbatch():
     set1 = []
-    set2=  []
     set3 = []
     set4=  []
     files= os.listdir(imgdir)
@@ -139,14 +130,10 @@ def getpathbatch():
             imgname = f.split('.')[0]
             set1.append(imgname)
     set1.sort(key = int)
-    for f in set1:
-        f = imgdir +"/" + f + ".jpg"
-        set2.append(f)
-    
-    lenn = int(len(set2) / batchsize)
-    
-    for i in range (0, len(set2), batchsize):
-        set3 = set2[i:i+batchsize]
+    for f in range(len(set1)):
+        set1[f] = imgdir +"/" + set1[f] + ".jpg"
+    for i in range (0, len(set1), batchsize):
+        set3 = set1[i:i+batchsize]
         set4.append(set3)
     return set4
     
@@ -168,14 +155,14 @@ def reset():
 
 ##write time result to alltime.txt
 def write(tbatch,totalimg,teamname):
-    tt = tbatch / int((totalimg/batchsize))
-    FPS = batchsize / tt
+    # tt = tbatch / int((totalimg/batchsize))
+    FPS = totalimg / tbatch
     ftime = open(alltime, 'a+')
     ftime.write( "\n" + teamname + " Frames per second:" + str((FPS)) + '\n') 
     ftime.close()
     return
 
-##write to XML
+
 def storeResultsToXML(resultRectangle, allImageName, myxml):
     for i in range(len(allImageName)):
         doc = xml.dom.minidom.Document()
@@ -201,13 +188,13 @@ def storeResultsToXML(resultRectangle, allImageName, myxml):
         nodeName.appendChild(doc.createTextNode("NotCare"))
         nodebndbox = doc.createElement('bndbox')
         nodebndbox_xmin = doc.createElement('xmin')
-        nodebndbox_xmin.appendChild(doc.createTextNode(str(resultRectangle[i, 0])))
+        nodebndbox_xmin.appendChild(doc.createTextNode(str(resultRectangle[i][0])))
         nodebndbox_xmax = doc.createElement('xmax')
-        nodebndbox_xmax.appendChild(doc.createTextNode(str(resultRectangle[i, 1])))
+        nodebndbox_xmax.appendChild(doc.createTextNode(str(resultRectangle[i][1])))
         nodebndbox_ymin = doc.createElement('ymin')
-        nodebndbox_ymin.appendChild(doc.createTextNode(str(resultRectangle[i, 2])))
+        nodebndbox_ymin.appendChild(doc.createTextNode(str(resultRectangle[i][2])))
         nodebndbox_ymax = doc.createElement('ymax')
-        nodebndbox_ymax.appendChild(doc.createTextNode(str(resultRectangle[i, 3])))
+        nodebndbox_ymax.appendChild(doc.createTextNode(str(resultRectangle[i][3])))
         nodebndbox.appendChild(nodebndbox_xmin)
         nodebndbox.appendChild(nodebndbox_xmax)
         nodebndbox.appendChild(nodebndbox_ymin)
@@ -219,6 +206,7 @@ def storeResultsToXML(resultRectangle, allImageName, myxml):
         root.appendChild(object)
 
         fileName = allImageName[i].replace('jpg', 'xml')
-        fp = open(myxml + "/" + fileName, 'w')
+        # print (fileName)
+        fp = open(myxml + "/" + fileName + ".xml", 'w')
         doc.writexml(fp, indent='\t', addindent='\t', newl='\n', encoding="utf-8")
     return
